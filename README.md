@@ -1,59 +1,198 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# E-commerce Shopping Cart System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A full-stack e-commerce shopping cart application built with Laravel 11, React (Inertia.js), and Tailwind CSS. Features user authentication, real-time cart management, automated low-stock notifications, and daily sales reporting.
 
-## About Laravel
+## 📋 Table of Contents
+- [Features](#✨-features)
+- [Tech Stack](#🛠️-tech-stack)
+- [Code Architecture](#🏗️-code-architecture)
+- [Installation](#📦-installation)
+- [Usage](#🚀-usage)
+- [Testing](#🧪-testing)
+- [Development Time](#⏱️-development-time)
+- [License](#📄-license)
+- [Author](#👨‍💻-author)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## ✨ Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Core Functionality
+- **User Authentication:** Secure login/registration using Laravel Breeze  
+- **Product Browsing:** View products with real-time stock availability  
+- **Shopping Cart:** Add, update, and remove items with persistent storage  
+- **Checkout System:** Complete orders with automatic stock deduction  
+- **Order History:** Track all completed purchases  
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Advanced Features
+- **Low Stock Alerts:** Automated email notifications when inventory falls below 5 units  
+- **Daily Sales Reports:** Scheduled reports sent to admin every evening at 8 PM  
+- **Queue Management:** Background job processing for emails  
+- **Real-time Validation:** Stock checking and quantity validation  
+- **Responsive UI:** Mobile-friendly design with Tailwind CSS  
 
-## Learning Laravel
+## 🛠️ Tech Stack
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+**Backend:**
+- Laravel 11
+- MySQL Database
+- Laravel Queue (Database driver)
+- Laravel Scheduler (Cron jobs)
+- Laravel Mail
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+**Frontend:**
+- React 18
+- Inertia.js
+- Tailwind CSS
+- Vite
 
-## Laravel Sponsors
+**Authentication:**
+- Laravel Breeze (React variant)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🏗️ Code Architecture
 
-### Premium Partners
+### Backend Structure
+```
+app/
+├── Models/
+│   ├── User.php
+│   ├── Product.php
+│   ├── CartItem.php
+│   ├── Order.php
+│   └── OrderItem.php
+├── Http/Controllers/
+│   ├── ProductController.php
+│   └── CartController.php
+├── Jobs/
+│   ├── SendLowStockNotification.php
+│   └── SendDailySalesReport.php
+└── Mail/
+    ├── LowStockAlert.php
+    └── DailySalesReport.php
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Frontend Structure
+```
+resources/js/
+├── Pages/
+│   ├── Products/
+│   │   └── Index.jsx
+│   └── Cart/
+│       └── Index.jsx
+└── Layouts/
+    └── AuthenticatedLayout.jsx
+```
 
-## Contributing
+### Database Schema
+**Key Relationships:**
+- User → has many → CartItems  
+- User → has many → Orders  
+- Product → has many → CartItems  
+- Order → has many → OrderItems  
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+**Important Fields:**
+- `products.stock_quantity` — Real-time inventory tracking  
+- `products.low_stock_notified` — Prevents duplicate notifications  
+- `cart_items` — User-product relationship with unique constraint  
+- `orders.total` — Calculated during checkout  
 
-## Code of Conduct
+### Key Design Decisions
+1. **Database-Backed Cart** — Persists across sessions, associated with authenticated users.  
+2. **Queue System for Emails** — Low stock notifications dispatched asynchronously.  
+3. **Scheduled Jobs** — Daily sales report at 8 PM via Laravel Scheduler.  
+4. **Transaction Safety** — Checkout wrapped in DB transaction for atomicity.  
+5. **Stock Management** — Real-time validation, automatic decrement, threshold ≤5 units.  
+6. **Inertia.js for SPA Experience** — Server-side rendering with client-side navigation.  
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 📦 Installation
 
-## Security Vulnerabilities
+### Prerequisites
+- PHP 8.2+
+- Composer
+- Node.js 18+
+- MySQL 8.0+
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Setup Steps
+```bash
+git clone https://github.com/yourusername/ecommerce-cart.git
+cd ecommerce-cart
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+```
 
-## License
+Configure `.env` with database and mail settings.  
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Create database:
+```sql
+CREATE DATABASE ecommerce_cart;
+```
+
+Run migrations and seed data:
+```bash
+php artisan migrate:fresh --seed
+```
+
+Start development servers:
+```bash
+# Terminal 1
+php artisan serve
+
+# Terminal 2
+php artisan queue:work
+
+# Terminal 3
+npm run dev
+
+# Terminal 4 (optional)
+php artisan schedule:work
+```
+
+## 🚀 Usage
+
+- Navigate to `http://localhost:8000`  
+- Login Credentials:  
+  - **Admin:** admin@example.com / password  
+  - **User:** user@example.com / password  
+
+**Testing Features:**
+1. Add products to cart  
+2. Update/remove items  
+3. Checkout and verify stock decrement  
+4. Test low stock alerts in logs  
+5. Test daily sales report via `php artisan schedule:run`  
+
+Emails are logged in `storage/logs/laravel.log`.
+
+## 🧪 Testing
+
+Manual Testing Checklist:
+- User registration/login  
+- Browse products and add to cart  
+- Update cart quantities  
+- Checkout with stock validation  
+- Trigger low stock notifications  
+- Generate daily sales report  
+
+Database inspection via `php artisan tinker`:
+```php
+\App\Models\CartItem::with('product')->get();
+\App\Models\Order::with('items.product')->get();
+\App\Models\Product::all();
+\App\Models\CartItem::truncate(); # Clear cart if needed
+```
+
+## ⏱️ Development Time
+**Approx. 2.5–3 hours**  
+- Setup: 30 min  
+- Backend: 1 hour  
+- Jobs & Scheduling: 30 min  
+- Frontend: 45 min  
+- Testing/Debugging: 30 min  
+- Documentation: 15 min  
+
+## 📄 License
+MIT License  
+
+## 👨‍💻 Author
+Portfolio/demonstration project showcasing full-stack Laravel + React development with queues and scheduling.  
+*Note: For production use, implement payment, shipping, order tracking, and admin dashboard.*
