@@ -32,7 +32,7 @@ A full-stack e-commerce shopping cart application built with Laravel 11, React (
 ## 🛠️ Tech Stack
 
 **Backend:**
-- Laravel 11
+- Laravel Framework 12.44.0
 - MySQL Database
 - Laravel Queue (Database driver)
 - Laravel Scheduler (Cron jobs)
