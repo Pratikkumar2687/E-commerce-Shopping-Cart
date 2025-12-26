@@ -37,6 +37,7 @@ class CartController extends Controller
         // dd([
         //     'user_id' => auth()->id(),
         //     'data' => $request->all(),
+        //     'q' => DB::raw("quantity + {$request->quantity}"),
         // ]);
 
         $request->validate([
@@ -56,7 +57,7 @@ class CartController extends Controller
                 'product_id' => $request->product_id,
             ],
             [
-                'quantity' => DB::raw("quantity + {$request->quantity}"),
+                'quantity' => $request->quantity,
             ]
         );
 
